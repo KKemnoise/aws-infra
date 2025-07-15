@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-on-spot
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            intent: spot
+        spec:
+          tolerations:
+            - key: "workload"
+              operator: "Equal"
+              value: "spot"
+              effect: "NoSchedule"
+          nodeSelector:
+            intent: spot
+            karpenter.sh/capacity-type: spot
+            kubernetes.io/arch: arm64  # o amd64 si querés x86
+          containers:
+            - name: hello
+              image: busybox
+              command: ["/bin/sh", "-c"]
+              args: ["echo Hello from Spot at $(date)"]
+          restartPolicy: OnFailure
