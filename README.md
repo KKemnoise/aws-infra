@@ -1,35 +1,45 @@
-## Introduction
+# Cloud-Architecture-Design
+Create a comprehensive cloud architecture design document for Innovate Inc.'s web application deployment, focusing on AWS as the chosen cloud provider due to its mature managed Kubernetes offering (EKS) and extensive managed services ecosystem.
+-----------
+Description
+One of our clients is a small startup called "Innovate Inc." They are developing a web application (details below) and are looking to deploy it on one of the two major cloud providers(AWS or GCP). 
 
-This Terraform project provisions a complete AWS EKS cluster, including:
-- A dedicated VPC
-- EKS control plane
-- Predefined NodePools using Karpenter for On-Demand and Spot instances
-- EC2NodeClass configurations optimized for multi-architecture (amd64, arm64)
+They have limited experience with cloud infrastructure and are seeking your expertise to design a robust, scalable, secure, and cost-effective solution. 
 
-Once deployed, users can use `kubectl` to apply their own Kubernetes manifests. Workloads are scheduled on the appropriate node groups using nodeSelector, taints, and labels already configured.
+They are particularly interested in leveraging managed Kubernetes and following best practices.Application Details:
+•Type: Web application with a REST API backend and a single-page application (SPA) frontend.•Technology Stack: Backend: Python/Flask, Frontend: React, Database: PostgreSQL.
+•Traffic: The expected initial load is low (a few hundred users per day), but they anticipate rapid growth to potentially millions of users.
+•Data: Sensitive user data is handled, requiring strong security measures.
+•Deployment Frequency: Aiming for continuous integration and continuous delivery (CI/CD).
 
----
+Assignment:
+Create an architectural design document for Innovate Inc.'s Cloud infrastructure. 
+The document should address the following key areas:
+1.Cloud Environment 
+Structure:1.Recommend the optimal number and purpose of AWS accounts/GCP  Projects for Innovate Inc. and justify your choice. Consider best practices for isolation, billing, and management.
+2.Network Design:
+1.Design the Virtual Private Cloud (VPC) architecture.2.Describe how you will secure the network.
+3.Compute Platform:
+1.Detail how you will leverage Kubernetes Service to deploy and manage the application.
+2.Describe your approach to node groups, scaling, and resource allocation within the cluster.
+3.Explain your strategy for containerization, including image building, registry, and deployment processes.
+4.Database:1.Recommend the appropriate service for the PostgreSQL database and justify your choice.
+2.Outline your approach to database backups, high availability, and disaster recovery.
 
-## Requirements
+Deliverables: A git repository (you may include this in the git repository from the other task) containing a README architecture document with at least one HDL (High-Level Diagram) to illustrate the architecture.
 
-- Access to an AWS account with IAM permissions to create an EKS cluster
-- AWS Cloud9 environment recommended (if following this guide step by step)
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed and configured
-- [Kubernetes CLI (kubectl)](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) installed
-- [Terraform CLI](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) installed
-- [Helm](https://helm.sh/docs/intro/install/) installed
-
----
-
-## Supported Versions
-
-| Resources/Tool                                                                 | Version    |
-| ------------------------------------------------------------------------------ | ---------- |
-| [Kubernetes](https://kubernetes.io/releases/)                                  | 1.32       |
-| [Karpenter](https://github.com/aws/karpenter/releases)                         | v1.5.0     |
-| [Terraform](https://github.com/hashicorp/terraform/releases)                   | v1.12.1    |
-| [AWS EKS](https://github.com/terraform-aws-modules/terraform-aws-eks/releases) | v20.37.0   |
-| [EKS Blueprints Addons](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/releases) | v1.21.0 |
-
-AWS samples used for this project:  
-https://github.com/aws-samples/?q=karpenter&type=all&language=&sort=
+## Suggested Accounts
+```
+AWS Organizations (root org)
+│
+├── Management account       ← Access control (IAM), billing, config
+├── Network account          ← VPC central, TGW, Direct Connect, endpoints
+├── Security/Audit account   ← CloudTrail, Config, GuardDuty, etc.
+├── Shared services          ← CI/CD, DNS, logs, ECR, etc.
+├── Workload accounts:
+│    ├── Dev
+│    ├── Test(optional)
+│    ├── Prod
+│    └── Data
+```
+![Diagram](./docs/diagrams/crossAccount.png)
