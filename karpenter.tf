@@ -122,7 +122,7 @@ resource "kubectl_manifest" "karpenter_node_pool_spot" {
               operator: In
               values: ["large", "xlarge"]
           nodeClassRef:
-            name: karpenter_ec2_node_class_spot
+            name: karpenter-spot-class
             group: karpenter.k8s.aws
             kind: EC2NodeClass
       disruption:
@@ -192,7 +192,7 @@ resource "kubectl_manifest" "karpenter_node_pool_ondemand" {
               operator: Gt
               values: ["2"]
           nodeClassRef:
-            name: karpenter_ec2_node_class_ondemand
+            name: karpenter-ondemand-class
             group: karpenter.k8s.aws
             kind: EC2NodeClass
       disruption:
